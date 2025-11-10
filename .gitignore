@@ -1,0 +1,31 @@
+# Visual Studio temporary files and settings
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# MonoDevelop/Xamarin Studio user settings
+*.userprefs
+
+# Build results (already included in yours)
+[Bb]in/
+[Oo]bj/
+
+# Resharper, VSCode, and Rider helpers (optional, for teams using these tools)
+_ReSharper*/
+*.DotSettings.user
+.idea/
+.vscode/
+
+# Coverage, test, and logs
+*.coverage
+*.coveragexml
+TestResult.xml
+
+# Node modules for projects with frontend parts
+node_modules/
+
+# OS-specific metadata
+.DS_Store
+Thumbs.db
