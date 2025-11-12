@@ -83,14 +83,6 @@ namespace Hospital.Controllers
             return Ok(model);
         }
 
-        //[HttpGet("confirm-email")]
-        //public async Task<IActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
-        //{
-        //    var result = await _authService.ConfirmEmailAsync(userId, token);
-        //    if (!result) return BadRequest("Email confirmation failed.");
-        //    return Ok("Email confirmed successfully.");
-        //}
-
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {

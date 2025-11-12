@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hospital.Application.DTO
+namespace Hospital.Application.Helper
 {
     public class SmtpSettings
     {

@@ -1,7 +1,6 @@
 ﻿
 using Clinic.Infrastructure.Persistence;
 using FluentAssertions.Common;
-using Hospital.Application.DTO;
 using Hospital.Application.Helper;
 using Hospital.Application.Interfaces.Repos;
 using Hospital.Application.Interfaces.Services;
@@ -59,8 +58,8 @@ namespace Hospital
                 options.Password.RequiredLength = 6;
                 options.Password.RequireNonAlphanumeric = false;
             })
- .AddEntityFrameworkStores<AppDbContext>()
- .AddDefaultTokenProviders(); // <-- مهم جدًا لإعادة تعيين الباسورد
+           .AddEntityFrameworkStores<AppDbContext>()
+           .AddDefaultTokenProviders(); //for reset password
 
 
             // REPO

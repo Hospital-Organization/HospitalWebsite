@@ -1,10 +1,10 @@
-﻿using Hospital.Application.DTO;
-using Hospital.Application.Interfaces.Services;
+﻿using Hospital.Application.Interfaces.Services;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using System.Threading.Tasks;
+using Hospital.Application.Helper;
 
 namespace Hospital.Infrastructure.Services
 {
@@ -26,9 +26,7 @@ namespace Hospital.Infrastructure.Services
             var builder = new BodyBuilder { HtmlBody = htmlBody };
             message.Body = builder.ToMessageBody();
 
-            // استخدمي full name لتجنب أي لبس
             using var client = new MailKit.Net.Smtp.SmtpClient();
-
             await client.ConnectAsync(_smtp.Host, _smtp.Port, _smtp.UseSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.Auto);
             await client.AuthenticateAsync(_smtp.Username, _smtp.Password);
             await client.SendAsync(message);

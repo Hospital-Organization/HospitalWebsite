@@ -161,7 +161,7 @@ namespace Hospital.Infrastructure.Services
         public async Task<bool> ForgotPasswordAsync(string email)
         {
             // link to your frontend 
-            var frontendUrl = "http://127.0.0.1:5500/forgetpass.html"; // for example: "https://hospital.com"
+            var frontendUrl = "http://127.0.0.1:5500/forgetpass.html"; 
 
             // seach abour email in database or not 
             var user = await _userManager.FindByEmailAsync(email);
@@ -177,7 +177,7 @@ namespace Hospital.Infrastructure.Services
 
                 // email content
                 var html = $@"
-                 <p>Hi {user.FullName},</p>
+                <p>Hi {user.FullName},</p>
                 <p>You requested to reset your password. Click <a href=""{resetLink}"">here</a> to reset it.</p>
                 <p>If you didn't request this, ignore this email.</p>";
 
