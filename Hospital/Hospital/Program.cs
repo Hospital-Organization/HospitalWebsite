@@ -1,9 +1,9 @@
 ﻿
 using Clinic.Infrastructure.Persistence;
-using FluentAssertions.Common;
 using Hospital.Application.Helper;
 using Hospital.Application.Interfaces.Repos;
 using Hospital.Application.Interfaces.Services;
+using Hospital.Application.MappingProfiles;
 using Hospital.Domain.Models;
 using Hospital.Infrastructure.Repository;
 using Hospital.Infrastructure.Services;
@@ -14,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
-
 namespace Hospital
 {
     public class Program
@@ -34,6 +33,13 @@ namespace Hospital
             //injection email service
             builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IEventService, EventService>();
+            //injection  repository
+            builder.Services.AddScoped<IEventRepository, EventRepository>();
+            //automapper
+            builder.Services.AddAutoMapper(typeof(EventProfile));
+
+
             //add cors
             builder.Services.AddCors(options =>
             {
@@ -113,7 +119,9 @@ namespace Hospital
 
             app.UseHttpsRedirection();
             app.UseCors("AllowWebApp");
+            app.UseAuthentication();
             app.UseAuthorization();
+
 
 
             app.MapControllers();
