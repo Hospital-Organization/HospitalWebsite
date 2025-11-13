@@ -35,9 +35,12 @@ namespace Hospital
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IBranchService, BranchService>();
+            builder.Services.AddScoped<INewsService, NewsService>();
+
             //injection  repository
             builder.Services.AddScoped<IEventRepository, EventRepository>();
             builder.Services.AddScoped<IBranchRepository, BranchRepository>();
+            builder.Services.AddScoped<INewsRepository, NewsRepository>();
             //automapper
             builder.Services.AddAutoMapper(typeof(EventProfile));
             builder.Services.AddAutoMapper(typeof(BranchProfile));
