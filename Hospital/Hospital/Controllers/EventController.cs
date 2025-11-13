@@ -63,6 +63,14 @@ namespace Hospital.Controllers
 
             return Ok($"Event with ID = {dto.EventId} deleted successfully.");
         }
+        [HttpGet("GetAllEventsInSystem")]
+        public async Task<IActionResult> GetAllEventsInSystem()
+        {
+            var events = await _eventService.GetAllEventInSystemAsync();
+            if (events == null || !events.Any())
+                return NotFound("No events found in the system.");
+            return Ok(events);
+        }
 
     }
 }

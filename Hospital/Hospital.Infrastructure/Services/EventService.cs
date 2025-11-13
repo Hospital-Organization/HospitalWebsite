@@ -108,5 +108,14 @@ namespace Hospital.Infrastructure.Services
             eventEntity.UpdatedAt = DateTime.UtcNow;
             return await _eventRepository.UpdateAsync(eventEntity);
         }
+
+        public async Task<IEnumerable<AddEventDto>> GetAllEventInSystemAsync()
+        {
+            
+            var events=await  _eventRepository.GetAllEventInSystemAsync();
+            if (events == null || !events.Any())
+                return Enumerable.Empty<AddEventDto>();
+            return _mapper.Map<IEnumerable<AddEventDto>>(events);
+        }
     }
 }

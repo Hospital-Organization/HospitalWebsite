@@ -1,4 +1,5 @@
 ﻿using Clinic.Infrastructure.Persistence;
+using Hospital.Application.DTO.Event;
 using Hospital.Application.Interfaces.Repos;
 using Hospital.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,13 @@ namespace Hospital.Infrastructure.Repository
             return await _dbContext.Events
                   .AsNoTracking()
                 .Where(b=>b.BranchId== branchId).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Event>> GetAllEventInSystemAsync()
+        {
+            return await _dbContext.Events
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<Event?> GetAsync(int id)
