@@ -22,7 +22,7 @@ namespace Hospital.Controllers
         }
 
 
-        [HttpGet("{id}")]
+        [HttpPost("GetBrach")]
         public async Task<IActionResult> GetEvent(GetEvent @event)
         {
             var eventDto = await _eventService.GetAsync(@event);
