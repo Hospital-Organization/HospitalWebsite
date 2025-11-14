@@ -1,4 +1,5 @@
-﻿using Hospital.Domain.Models;
+﻿using Hospital.Application.DTO.Event;
+using Hospital.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,10 @@ namespace Hospital.Application.Interfaces.Repos
         Task<int> UpdateAsync(Event @event);
         Task<int> DeleteAsync(Event @event);
         Task<Event?> GetAsync(int id);               
-        Task<IEnumerable<Event>> GetAllAsync();
+        Task<IEnumerable<Event>> GetAllAsync(int branchId);
+
+        Task<IEnumerable<Event>> GetAllEventInSystemAsync();
+
 
     }
 }
