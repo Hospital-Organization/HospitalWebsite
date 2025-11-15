@@ -45,6 +45,12 @@ namespace Hospital.Infrastructure.Repository
             _context.Branches.Update(branch);
             await _context.SaveChangesAsync();
         }
+        public async Task<List<Branch>> GetByIdsAsync(IEnumerable<int> ids)
+        {
+            return await _context.Branches
+                .Where(b => ids.Contains(b.BranchId))
+                .ToListAsync();
+        }
 
         public async Task<List<Branch>> GetBranchesByIdsAsync(List<int> branchIds)
         {
