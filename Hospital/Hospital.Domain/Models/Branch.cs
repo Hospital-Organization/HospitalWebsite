@@ -19,7 +19,8 @@ namespace Hospital.Domain.Models
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public ICollection<User> Users { get; set; } = new List<User>();
+
+        //public ICollection<User> Users { get; set; } = new List<User>();
         public ICollection<Doctor> Doctors { get; set; } = new List<Doctor>();
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         public ICollection<Service> Services { get; set; } = new List<Service>();

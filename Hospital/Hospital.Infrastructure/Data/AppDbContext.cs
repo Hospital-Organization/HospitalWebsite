@@ -51,8 +51,7 @@ namespace Clinic.Infrastructure.Persistence
                 e.Property(u => u.DateOfBirth).HasConversion(dateOnlyConverter);
                 e.Property(u => u.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
                 e.Property(u => u.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
-                e.HasOne(u => u.Branch).WithMany(b => b.Users)
-                    .HasForeignKey(u => u.BranchId).OnDelete(DeleteBehavior.SetNull);
+
             });
 
             // -------------------------------
@@ -63,6 +62,9 @@ namespace Clinic.Infrastructure.Persistence
                 e.ToTable("Branches");
                 e.Property(p => p.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
                 e.Property(p => p.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
+
+                e.HasMany(b => b.Doctors)
+                 .WithMany(d => d.Branches);
             });
 
             // -------------------------------
@@ -120,13 +122,24 @@ namespace Clinic.Infrastructure.Persistence
                 e.Property(p => p.ConsultationFees).HasPrecision(10, 2);
                 e.Property(p => p.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
                 e.Property(p => p.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
-                e.HasOne(d => d.User).WithOne(u => u.DoctorProfile)
-                    .HasForeignKey<Doctor>(d => d.UserId).OnDelete(DeleteBehavior.Cascade);
-                e.HasOne(d => d.Specialization).WithMany(s => s.Doctors)
-                    .HasForeignKey(d => d.SpecializationId).OnDelete(DeleteBehavior.Restrict);
-                e.HasOne(d => d.Branch).WithMany(b => b.Doctors)
-                    .HasForeignKey(d => d.BranchId).OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(d => d.User)
+                    .WithOne(u => u.DoctorProfile)
+                    .HasForeignKey<Doctor>(d => d.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(d => d.Specialization)
+                    .WithMany(s => s.Doctors)
+                    .HasForeignKey(d => d.SpecializationId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // ⭐ Many-to-Many without join class
+                e.HasMany(d => d.Branches)
+                    .WithMany(b => b.Doctors)
+                    .UsingEntity(j => j.ToTable("DoctorBranches"));
             });
+
+
 
             model.Entity<Patient>(e =>
             {

@@ -17,8 +17,6 @@ namespace Hospital.Domain.Models
         public DateOnly? DateOfBirth { get; set; }
         [Required, StringLength(50)] public string Role { get; set; } = "User";
 
-        public int? BranchId { get; set; }
-        public Branch? Branch { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
