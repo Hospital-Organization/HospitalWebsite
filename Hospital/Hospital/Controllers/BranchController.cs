@@ -14,34 +14,33 @@ namespace Hospital.Controllers
         {
             _branchService = branchService;
         }
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _branchService.GetAllAsync());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetBy/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             return Ok(await _branchService.GetByIdAsync(id));
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] CreateBranchDto dto)
         {
             var branch = await _branchService.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = branch.BranchId }, branch);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateBranchDto dto)
+        [HttpPut("Update")]
+        public async Task<IActionResult> Update([FromBody] UpdateBranchDto dto)
         {
-            dto.BranchId = id;
             await _branchService.UpdateAsync(dto);
             return Ok("Branch Updated Successfully");
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _branchService.DeleteAsync(id);

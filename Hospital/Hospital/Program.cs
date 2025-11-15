@@ -30,27 +30,30 @@ namespace Hospital
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<AppDbContext>(opt =>
             opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            //injection email service
+            //injection service
             builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IBranchService, BranchService>();
             builder.Services.AddScoped<INewsService, NewsService>();
-
+            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IBannerService, BannerService>();
             builder.Services.AddScoped<IServiceService, ServiceService>();
+            builder.Services.AddScoped<ISpecializationService, SpecializationService>();
 
-            //injection  repository
+            //injection repository
             builder.Services.AddScoped<IEventRepository, EventRepository>();
             builder.Services.AddScoped<IBranchRepository, BranchRepository>();
             builder.Services.AddScoped<INewsRepository, NewsRepository>();
             builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
             builder.Services.AddScoped<IBannerRepository,BannerRepository>();
+            builder.Services.AddScoped<ISpecializationRepository, SpecializationRepository>();
+
             //automapper
             builder.Services.AddAutoMapper(typeof(EventProfile));
             builder.Services.AddAutoMapper(typeof(BranchProfile));
-
-
+            builder.Services.AddAutoMapper(typeof(NewsProfile));
+            builder.Services.AddAutoMapper(typeof(SpecializationProfile));
             builder.Services.AddAutoMapper(typeof(BannerProfile));
             builder.Services.AddAutoMapper(typeof(ServiceProfile));
 

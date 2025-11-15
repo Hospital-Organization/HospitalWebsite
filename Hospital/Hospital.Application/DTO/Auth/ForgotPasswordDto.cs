@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hospital.Application.DTO
+namespace Hospital.Application.DTO.Auth
 {
-    public class RefreshToken
+    public class ForgotPasswordDto
     {
-        public string Token { get; set; }
+        public string Email { get; set; }
     }
 }

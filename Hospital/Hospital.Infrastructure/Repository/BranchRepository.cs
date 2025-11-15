@@ -36,7 +36,8 @@ namespace Hospital.Infrastructure.Repository
 
         public async Task<Branch?> GetByIdAsync(int id)
         {
-            return await _context.Branches.FindAsync(id);
+            return await _context.Branches.AsNoTracking()
+                .FirstOrDefaultAsync(e => e.BranchId == id);
         }
 
         public async Task UpdateAsync(Branch branch)

@@ -1,4 +1,4 @@
-﻿using Hospital.Application.DTO;
+﻿using Hospital.Application.DTO.Auth;
 using Hospital.Application.Helper;
 using Hospital.Application.Interfaces.Services;
 using Hospital.Domain.Models;

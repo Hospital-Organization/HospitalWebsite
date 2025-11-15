@@ -1,0 +1,74 @@
+﻿using Clinic.Infrastructure.Persistence;
+using Hospital.Application.DTO.Specialization;
+using Hospital.Application.Interfaces.Repos;
+using Hospital.Domain.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Hospital.Infrastructure.Repository
+{
+    public class SpecializationRepository : ISpecializationRepository
+    {
+        private readonly AppDbContext _dbContext;
+        public SpecializationRepository(AppDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        public async Task<Specialization> AddAsync(Specialization specialization)
+        {
+            await _dbContext.Specializations.AddAsync(specialization);
+            await _dbContext.SaveChangesAsync();
+            return specialization;
+        }
+
+        public async Task<int> DeleteAsync(Specialization specialization)
+        {
+            _dbContext.Specializations.Remove(specialization);
+            return await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Specialization>> GetAllByBranchAsync(int branchId)
+        {
+            var specializations = await _dbContext.Specializations
+                .AsNoTracking()
+                .Where(s => s.Branches.Any(b => b.BranchId == branchId))
+                .ToListAsync();
+
+            return specializations;
+        }
+
+
+        public async Task<IEnumerable<Specialization>> GetAllSpecializationInSystemAsync()
+        {
+            return await _dbContext.Specializations 
+               .AsNoTracking()
+               .Include(s => s.Branches)
+               .ToListAsync();
+        }
+
+        public async Task<Specialization?> GetAsync(int id)
+        {
+            return await _dbContext.Specializations
+               .AsNoTracking()
+               .Include(s => s.Branches)
+               .FirstOrDefaultAsync(s => s.SpecializationId == id);
+        }
+
+        public async Task<int> UpdateAsync(Specialization specialization)
+        {
+            _dbContext.Specializations.Update(specialization);
+            return await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<List<Branch>> GetBranchesByIdsAsync(List<int> branchIds)
+        {
+            return await _dbContext.Branches
+                .Where(b => branchIds.Contains(b.BranchId))
+                .ToListAsync();
+        }
+    }
+}
