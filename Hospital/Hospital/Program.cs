@@ -42,6 +42,8 @@ namespace Hospital
             builder.Services.AddScoped<IServiceService, ServiceService>();
             builder.Services.AddScoped<ISpecializationService, SpecializationService>();
             builder.Services.AddScoped<IDoctorService, DoctorService>();
+            builder.Services.AddScoped<IPatientService, PatientService>();
+
 
 
             //injection repository
@@ -52,6 +54,7 @@ namespace Hospital
             builder.Services.AddScoped<IBannerRepository,BannerRepository>();
             builder.Services.AddScoped<ISpecializationRepository, SpecializationRepository>();
             builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
+            builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 
 
             //automapper
@@ -61,6 +64,7 @@ namespace Hospital
             builder.Services.AddAutoMapper(typeof(SpecializationProfile));
             builder.Services.AddAutoMapper(typeof(BannerProfile));
             builder.Services.AddAutoMapper(typeof(ServiceProfile));
+            builder.Services.AddAutoMapper(typeof(PatientProfile));
 
 
             //add cors
