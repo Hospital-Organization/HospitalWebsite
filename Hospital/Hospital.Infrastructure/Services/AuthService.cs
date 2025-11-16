@@ -23,14 +23,16 @@ namespace Hospital.Infrastructure.Services
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
+        private readonly IPatientRepository _patientRepository;
 
-        public AuthService(IOptions<JWT> jwt, IAuthRepository authRepository, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService)
+        public AuthService(IOptions<JWT> jwt, IAuthRepository authRepository, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IEmailService emailService, IPatientRepository patientRepository)
         {
             _jwt = jwt.Value;
             _authRepository = authRepository;
             _userManager = userManager;
             _roleManager = roleManager;
             _emailService = emailService;
+            _patientRepository = patientRepository;
         }
 
         public async Task<RegisterDto> RegisterAsync(RegisterModel model)
@@ -44,8 +46,8 @@ namespace Hospital.Infrastructure.Services
                 return new RegisterDto { Message = "Username already exists!" };
 
             // Validate role
-            if (string.IsNullOrEmpty(model.Role) || (model.Role != "Patient" && model.Role != "Doctor"))
-                return new RegisterDto { Message = "Invalid role. Only 'Patient' or 'Doctor' allowed." };
+            if (string.IsNullOrEmpty(model.Role) || (model.Role != "Patient"))
+                return new RegisterDto { Message = "Invalid role. Only 'Patient' allowed." };
 
             // Ensure role exists before creating user
             if (!await _roleManager.RoleExistsAsync(model.Role))
@@ -69,6 +71,22 @@ namespace Hospital.Infrastructure.Services
                 return new RegisterDto { Message = string.Join(", ", result.Errors.Select(e => e.Description)) };
 
             await _userManager.AddToRoleAsync(user, model.Role);
+
+            // Create patient if role is Patient
+            if (model.Role == "Patient")
+            {
+                var patient = new Patient
+                {
+                    UserId = user.Id,
+                    User = user,
+                    EmergencyContact = model.PhoneNumber,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                await _patientRepository.AddAsync(patient);
+            }
+
 
             return new RegisterDto
             {
