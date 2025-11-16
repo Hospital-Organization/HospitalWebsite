@@ -49,14 +49,16 @@ namespace Hospital.Infrastructure.Services
 
             var authResult = await _authService.RegisterAsync(registerModel);
 
+
             if (!authResult.IsAuthenticated)
                 throw new InvalidOperationException("Failed to create user: " + authResult.Message);
 
             // 2) Map dto -> Doctor
             var doctor = _mapper.Map<Doctor>(dto);
 
-            // 3) Extract UserId from token
-            var userId = TokenHelper.GetUserIdFromToken(authResult.Token);
+            // 3)  find UserId
+            var userId = await _authService.GetUserIdByEmailAsync(dto.Email);
+
             doctor.UserId = userId;
 
             doctor.CreatedAt = DateTime.UtcNow;
