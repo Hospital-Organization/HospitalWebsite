@@ -118,15 +118,15 @@ namespace Hospital.Infrastructure.Services
             var doctor = await _doctorRepo.GetAsync(dto.DoctorId)
                 ?? throw new KeyNotFoundException($"Doctor with ID {dto.DoctorId} not found.");
 
-            // تحديث الحقول الموجودة في Doctor
             _mapper.Map(dto, doctor);
 
-            // تحديث الحقول الموجودة في User
             if (doctor.User != null)
             {
                 doctor.User.UserName = dto.UserName;
                 doctor.User.Email = dto.Email;
                 doctor.User.FullName = dto.FullName;
+                doctor.User.NormalizedUserName = dto.UserName?.ToUpper();
+                doctor.User.NormalizedEmail = dto.Email?.ToUpper();
             }
 
             // تحديث الفروع بناءً على BranchID
@@ -136,8 +136,10 @@ namespace Hospital.Infrastructure.Services
                 foreach (var branchId in dto.BranchID.Distinct())
                 {
                     var branch = await _branchRepo.GetByIdAsync(branchId);
-                    if (branch != null)
-                        doctor.Branches.Add(branch);
+                    if (branch == null)
+                        throw new ArgumentException($"Cannot update doctor. Branch with ID {branchId} does not exist.");
+
+                    doctor.Branches.Add(branch);
                 }
             }
 
