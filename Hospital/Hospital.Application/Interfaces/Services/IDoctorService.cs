@@ -16,5 +16,6 @@ namespace Hospital.Application.Interfaces.Services
         Task<DoctorDto?> GetAsync(GetDoctorDto doctordto);
         Task<IEnumerable<DoctorDto>> GetAllAsync(int branchId);
         Task<IEnumerable<DoctorDto>> GetAllEventInSystemAsync();
+        Task<IEnumerable<DoctorDto>> GetDoctorsBySpecializationIdAsync(int specializationId);
     }
 }

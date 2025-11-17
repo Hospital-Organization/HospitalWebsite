@@ -61,5 +61,18 @@ namespace Hospital.Infrastructure.Repos
                 .Include(d => d.Branches)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Doctor>> GetDoctorsBySpecializationIdAsync(int specializationId)
+        {
+            return await _context.Doctors
+                .Include(d => d.User)
+                .Include(d => d.Branches)
+                    .ThenInclude(b => b.Specializations)
+                .Where(d => d.Branches
+                    .Any(b => b.Specializations
+                        .Any(s => s.SpecializationId == specializationId)))
+                .ToListAsync();
+        }
+
     }
 }
