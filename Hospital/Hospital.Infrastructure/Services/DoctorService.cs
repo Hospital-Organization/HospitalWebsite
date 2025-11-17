@@ -47,6 +47,11 @@ namespace Hospital.Infrastructure.Services
 
             try
             {
+                // 0️⃣ Validate Specialization
+                var specialization = await _context.Specializations.FindAsync(dto.SpecializationId);
+                if (specialization == null)
+                    throw new KeyNotFoundException($"Specialization with ID {dto.SpecializationId} does not exist.");
+
                 // 1️⃣ Register user via AuthService
                 var registerModel = new RegisterModel
                 {
@@ -162,6 +167,11 @@ namespace Hospital.Infrastructure.Services
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
+
+            // 0️⃣ Validate Specialization
+            var specialization = await _context.Specializations.FindAsync(dto.SpecializationId);
+            if (specialization == null)
+                throw new KeyNotFoundException($"Specialization with ID {dto.SpecializationId} does not exist.");
 
             // 1️⃣ Get existing doctor
             var doctor = await _doctorRepo.GetAsync(dto.DoctorId);
