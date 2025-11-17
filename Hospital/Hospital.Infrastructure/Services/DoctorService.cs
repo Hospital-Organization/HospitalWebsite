@@ -190,5 +190,19 @@ namespace Hospital.Infrastructure.Services
             var doctors = await _doctorRepo.GetAllAsync();
             return _mapper.Map<IEnumerable<DoctorDto>>(doctors);
         }
+
+        public async Task<IEnumerable<DoctorDto>> GetDoctorsBySpecializationIdAsync(int specializationId)
+        {
+            if (specializationId <= 0)
+                throw new ArgumentException("SpecializationId must be greater than zero.");
+
+            var doctors = await _doctorRepo.GetDoctorsBySpecializationIdAsync(specializationId);
+
+            if (doctors == null || !doctors.Any())
+                throw new KeyNotFoundException($"No doctors found for specialization ID {specializationId}.");
+
+            return _mapper.Map<IEnumerable<DoctorDto>>(doctors);
+        }
+
     }
 }
