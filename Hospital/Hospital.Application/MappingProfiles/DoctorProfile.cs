@@ -46,9 +46,7 @@ namespace Hospital.Application.MappingProfiles
 
             CreateMap<DoctorSelfUpdateDto, Doctor>()
     .ForMember(dest => dest.User, opt => opt.Ignore()) // Don't overwrite the User navigation automatically
-    .ForMember(dest => dest.Branches, opt => opt.Ignore()); // Handle branches manually if needed
-
-
+    .ForMember(dest => dest.Branches, opt => opt.Ignore()) // Handle branches manually if needed
                 .ForMember(dest => dest.DoctorId, opt => opt.Ignore())
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())
                 .ForMember(dest => dest.Branches, opt => opt.Ignore())
