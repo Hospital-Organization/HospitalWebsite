@@ -154,7 +154,8 @@ namespace Clinic.Infrastructure.Persistence
             {
                 e.ToTable("Appointments");
                 e.Property(p => p.Date).HasConversion(dateOnlyConverter);
-                e.Property(p => p.Time).HasConversion(timeOnlyConverter);
+                e.Property(p => p.Time).HasColumnType("datetime2");
+                //e.Property(p => p.Time).HasConversion(timeOnlyConverter);
                 e.Property(p => p.Status).HasConversion(apptStatusConverter).HasMaxLength(20);
                 e.Property(p => p.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
                 e.Property(p => p.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");

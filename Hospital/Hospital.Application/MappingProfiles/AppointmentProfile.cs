@@ -1,0 +1,34 @@
+﻿using AutoMapper;
+using Hospital.Application.DTO.Appointment;
+using Hospital.Application.DTO.MedicalRecord;
+using Hospital.Domain.Models;
+using System;
+
+namespace Hospital.Application.MappingProfiles
+{
+    public class AppointmentProfile : Profile
+    {
+        public AppointmentProfile()
+        {
+            // AddAppointmentDto → Appointment
+            CreateMap<AddAppointmentDto, Appointment>()
+                .ForMember(dest => dest.AppointmentId, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
+
+            // Appointment → AppointmentDto
+            CreateMap<Appointment, AppointmentDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+
+            // Branch → BranchShortDto
+            CreateMap<Branch, BranchShortDto>();
+
+            // Patient → PatientAppointmentDto
+            CreateMap<Patient, PatientAppointmentDto>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.User.PhoneNumber));
+        }
+    }
+}

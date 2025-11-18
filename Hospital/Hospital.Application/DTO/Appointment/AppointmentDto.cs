@@ -11,7 +11,7 @@ namespace Hospital.Application.DTO.Appointment
         public int AppointmentId { get; set; }
 
         public DateOnly Date { get; set; }
-        public TimeOnly Time { get; set; }
+        public DateTime Time { get; set; }
 
         public string Status { get; set; }
 

@@ -18,8 +18,8 @@ namespace Hospital.Domain.Models
         [Required] public int BranchId { get; set; }
         public Branch Branch { get; set; } = null!;
         [Required] public DateOnly Date { get; set; }
-        [Required] public TimeOnly Time { get; set; }
-        [Required] public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
+        [Required] public DateTime Time { get; set; }
+        [Required] public AppointmentStatus Status { get; set; } = AppointmentStatus.Confirmed;
         public string? CreatedBy { get; set; }
         public User? Creator { get; set; }
         public string? Notes { get; set; }

@@ -37,9 +37,9 @@ namespace Hospital.Application.MappingProfiles
                     Name = src.Branch.BranchName
                 }));
             CreateMap<Doctor, DoctorMedicalDto>()
-    .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
-    .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
-    .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName));
+              .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
+              .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+              .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName));
 
 
         }
