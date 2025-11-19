@@ -234,32 +234,39 @@ namespace Hospital.Infrastructure.Services
 
         public async Task<bool> ForgotPasswordAsync(string email)
         {
-             /////////////////////////////////////////////////////////////////////
-            // link to your frontend 
-            var frontendUrl = "http://127.0.0.1:5500/forgetpass.html"; 
-
+            
             // seach abour email in database or not 
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user != null)
             {
-                // make token for reset password
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var encodedToken = Uri.EscapeDataString(token);
+                // generate code to send it to email function that make rendom code of 6 digits
+                var code = GenerateRandomCode();
 
-                // send url + email + token to frontend
-                var resetLink = $"{frontendUrl}/reset-password?email={Uri.EscapeDataString(email)}&token={encodedToken}";
+                // Save code in database (valid for 10 minutes)
+                var resetCode = new PasswordResetCode
+                {
+                    UserId = user.Id,
+                    Code = code,
+                    ExpireAt = DateTime.UtcNow.AddMinutes(10)
+                };
 
-                // email content
+               _context.PasswordResetCodes.Add(resetCode);
+                await _context.SaveChangesAsync();
+
+                // Email content
                 var html = $@"
-                <p>Hi {user.FullName},</p>
-                <p>You requested to reset your password. Click <a href=""{resetLink}"">here</a> to reset it.</p>
-                <p>If you didn't request this, ignore this email.</p>";
+          <p>Hi {user.FullName},</p>
+          <p>Your password reset code is: <b>{code}</b></p>
+          <p>This code is valid for 10 minutes.</p>";
+
+
+                
 
                 try
                 {
                     // send email
-                    await _emailService.SendEmailAsync(email, "Reset your password", html);
+                    await _emailService.SendEmailAsync(email, "Your verification code", html);
                 }
                 catch (Exception ex)
                 {
@@ -270,18 +277,31 @@ namespace Hospital.Infrastructure.Services
 
             return true;
         }
-
-
-        // this  function to reset password
-        public async Task<bool> ResetPasswordAsync(string email, string token, string newPassword)
+        public async Task<bool> VerifyCodeAsync(string email, string code)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null) return false;
-
-            var decodedToken = Uri.UnescapeDataString(token);
-            var result = await _userManager.ResetPasswordAsync(user, decodedToken, newPassword);
-            return result.Succeeded;;
+            var resetCode = await _context.PasswordResetCodes
+                .Where(c => c.UserId == user.Id && c.Code == code && c.ExpireAt > DateTime.UtcNow)
+                .FirstOrDefaultAsync();
+            return resetCode != null;
         }
+
+        // this  function to reset password
+        public async Task<bool> ResetPasswordAsync(string email, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return false;
+
+            var remove = await _userManager.RemovePasswordAsync(user);
+            if (!remove.Succeeded)
+                return false;
+
+            var add = await _userManager.AddPasswordAsync(user, newPassword);
+            return add.Succeeded;
+        }
+
         private string GenerateRefreshToken()
         {
             var randomBytes = new byte[64];
@@ -332,6 +352,11 @@ namespace Hospital.Infrastructure.Services
 
             return user.Id;
         }
+        private string GenerateRandomCode()
+        {
+            return new Random().Next(100000, 999999).ToString();
+        }
+
 
 
 
