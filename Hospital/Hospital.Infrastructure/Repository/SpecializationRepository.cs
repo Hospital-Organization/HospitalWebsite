@@ -34,6 +34,7 @@ namespace Hospital.Infrastructure.Repository
         public async Task<IEnumerable<Specialization>> GetAllByBranchAsync(int branchId)
         {
             var specializations = await _dbContext.Specializations
+                .Include(s => s.Branches)
                 .Include(s => s.Doctors)
                 .ThenInclude(d => d.User)
                 .Where(s => s.Branches.Any(b => b.BranchId == branchId))
