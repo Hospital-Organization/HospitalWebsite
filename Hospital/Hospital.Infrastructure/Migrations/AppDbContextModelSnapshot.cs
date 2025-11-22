@@ -452,6 +452,62 @@ namespace Hospital.Infrastructure.Migrations
                     b.ToTable("Patients", (string)null);
                 });
 
+            modelBuilder.Entity("Hospital.Domain.Models.Payment", b =>
+                {
+                    b.Property<int>("PaymentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("GatewayResponse")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymobMerchantOrderId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<long?>("PaymobOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("PaymobTransactionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.HasKey("PaymentId");
+
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
+
+                    b.ToTable("Payments", (string)null);
+                });
+
             modelBuilder.Entity("Hospital.Domain.Models.Schedule", b =>
                 {
                     b.Property<int>("ScheduleId")
@@ -1006,6 +1062,17 @@ namespace Hospital.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Hospital.Domain.Models.Payment", b =>
+                {
+                    b.HasOne("Hospital.Domain.Models.Appointment", "Appointment")
+                        .WithOne("Payment")
+                        .HasForeignKey("Hospital.Domain.Models.Payment", "AppointmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+                });
+
             modelBuilder.Entity("Hospital.Domain.Models.Schedule", b =>
                 {
                     b.HasOne("Hospital.Domain.Models.Doctor", "Doctor")
@@ -1082,6 +1149,8 @@ namespace Hospital.Infrastructure.Migrations
             modelBuilder.Entity("Hospital.Domain.Models.Appointment", b =>
                 {
                     b.Navigation("MedicalRecords");
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("Hospital.Domain.Models.Branch", b =>

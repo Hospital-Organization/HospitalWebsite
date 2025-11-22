@@ -9,6 +9,7 @@ using OfficeOpenXml;
 using System.Collections.Generic;
 using System.ComponentModel;
 using OfficeOpenXml;
+using System.Security.Claims;
 
 namespace Hospital.Controllers
 {
@@ -18,34 +19,70 @@ namespace Hospital.Controllers
     {
         private readonly IAuthService _authService;
 
-        public AuthController(IAuthService authService)
+
+    public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
+
+        // ============================
+        // 🔹 TEST AUTHENTICATION
+        // ============================
+        [HttpGet("test-auth")]
+        [Authorize]
+        public IActionResult TestAuthentication()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                         ?? User.FindFirstValue("uid")
+                         ?? "Not found";
+
+            var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
+
+            return Ok(new
+            {
+                Message = "You are authenticated!",
+                UserId = userId,
+                Roles = roles
+            });
+        }
+
+        // ============================
+        // 🔹 TEST ROLE AUTHORIZATION (Patient)
+        // ============================
+        [HttpGet("test-role")]
+        [Authorize(Roles = "Patient")]
+        public IActionResult TestRole()
+        {
+            return Ok(new
+            {
+                Message = "Authorization success! You have the Patient role."
+            });
+        }
+
+        // ======================
+        // Existing endpoints...
+        // ======================
 
         [HttpGet("throw")]
         public IActionResult ThrowError()
         {
             throw new Exception("This is a test exception!");
         }
+
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterModel model)
         {
-            // Validate email format
             if (!ValidationHelper.IsValidEmail(model.Email))
             {
                 ModelState.AddModelError("Email", "Invalid email format");
                 return BadRequest(ModelState);
             }
 
-            // Validate model state
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Call AuthService
             var result = await _authService.RegisterAsync(model);
 
-            // If registration failed, return bad request
             if (!result.IsRegistered)
             {
                 ModelState.AddModelError("RegistrationError", result.Message);
@@ -53,55 +90,6 @@ namespace Hospital.Controllers
             }
 
             return Ok(result);
-        }
-
-
-        [HttpPost("register-from-excel")]
-        public async Task<IActionResult> RegisterFromExcelAsync(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded.");
-
-            var users = new List<RegisterModel>();
-
-            using (var stream = new MemoryStream())
-            {
-                await file.CopyToAsync(stream);
-
-                OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
-
-                using (var package = new ExcelPackage(stream))
-                {
-                    var worksheet = package.Workbook.Worksheets.FirstOrDefault();
-                    if (worksheet == null)
-                        return BadRequest("No worksheet found in Excel file.");
-
-                    for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
-                    {
-                        var model = new RegisterModel
-                        {
-                            Username = worksheet.Cells[row, 1].Text,
-                            Email = worksheet.Cells[row, 2].Text,
-                            Name = worksheet.Cells[row, 3].Text,
-                            Role = worksheet.Cells[row, 5].Text,
-                            PhoneNumber = worksheet.Cells[row, 4].Text,
-                            Password = worksheet.Cells[row, 6].Text
-                        };
-
-                        users.Add(model);
-                    }
-                }
-            }
-
-            var results = new List<RegisterDto>();
-
-            foreach (var user in users)
-            {
-                var result = await _authService.RegisterAsync(user);
-                results.Add(result);
-            }
-
-            return Ok(results);
         }
 
 
@@ -123,7 +111,7 @@ namespace Hospital.Controllers
         }
 
         [HttpPost("addrole")]
-        [Authorize] // This endpoint should be authorized
+        [Authorize]
         public async Task<IActionResult> AddRoleAsync([FromBody] AddRoleModel model)
         {
             if (!ModelState.IsValid)
@@ -196,7 +184,6 @@ namespace Hospital.Controllers
             return Ok("Password has been reset successfully.");
         }
 
-
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshToken tokendto)
         {
@@ -206,8 +193,50 @@ namespace Hospital.Controllers
 
             return Ok(result);
         }
+        //////////////////test ////////////////////
+        // Test endpoint
+        [HttpGet("whoami")]
+        [Authorize] // requires valid token
+        public IActionResult WhoAmI()
+        {
+            var userId = User.FindFirst("uid")?.Value;
+            var roles = User.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value)
+                .ToList();
 
+            return Ok(new
+            {
+                UserId = userId,
+                Roles = roles
+            });
+        }
 
+        // Test Admin-only
+        [HttpGet("admin-only")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminOnly()
+        {
+            return Ok("You are Admin — Authorization works!");
+        }
+
+        // Test Doctor-only
+        [HttpGet("doctor-only")]
+        [Authorize(Roles = "Doctor")]
+        public IActionResult DoctorOnly()
+        {
+            return Ok("You are Doctor — Authorization works!");
+        }
+
+        // Test Patient-only
+        [HttpGet("patient-only")]
+        [Authorize(Roles = "Patient")]
+        public IActionResult PatientOnly()
+        {
+            return Ok("You are Patient — Authorization works!");
+        }
     }
 
 }
+
+
