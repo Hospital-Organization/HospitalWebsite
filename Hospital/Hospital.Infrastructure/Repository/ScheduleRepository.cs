@@ -43,6 +43,7 @@ namespace Hospital.Infrastructure.Repository
             {
                 return await _context.Schedules
                     .Include(s => s.Doctor)
+                     .ThenInclude(d => d.User)
                     .FirstOrDefaultAsync(s => s.ScheduleId == scheduleId);
             }
 
@@ -50,6 +51,7 @@ namespace Hospital.Infrastructure.Repository
             {
                 return await _context.Schedules
                     .Include(s => s.Doctor)
+                     .ThenInclude(d => d.User)
                     .ToListAsync();
             }
 
@@ -58,6 +60,7 @@ namespace Hospital.Infrastructure.Repository
                 return await _context.Schedules
                     .Where(s => s.DoctorId == doctorId)
                     .Include(s => s.Doctor)
+                     .ThenInclude(d => d.User)
                     .ToListAsync();
             }
 
@@ -66,6 +69,7 @@ namespace Hospital.Infrastructure.Repository
                 return await _context.Schedules
                     .Where(s => s.DayOfWeek.ToLower() == dayOfWeek.ToLower())
                     .Include(s => s.Doctor)
+                     .ThenInclude(d => d.User)
                     .ToListAsync();
             }
         }
