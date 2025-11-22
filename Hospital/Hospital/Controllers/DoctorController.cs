@@ -213,6 +213,11 @@ namespace Hospital.Controllers
             var result = await _doctorService.GetTodayForDoctorAsync(doctorId);
             return Ok(result);
         }
+        public async Task<IActionResult> convertStatuesOFPaymentToPayied(int Appoimentid)
+        {
+            var result = await _doctorService.convertStatuesOFPaymentToPayied(Appoimentid);
+            return Ok(result);
+        }
 
     }
 }

@@ -21,6 +21,7 @@ namespace Hospital.Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly ILogger<DoctorService> _logger;
         private readonly AppDbContext _context ;
+        private readonly IAppointmentRepository _appointmentRepository;
 
 
         public DoctorService(
@@ -30,6 +31,7 @@ namespace Hospital.Infrastructure.Services
         IEmailService emailService,
         IAuthService authService,
         ILogger<DoctorService> logger,
+         IAppointmentRepository appointmentRepository,
         AppDbContext context)
         {
             _mapper = mapper;
@@ -39,6 +41,7 @@ namespace Hospital.Infrastructure.Services
             _authService = authService;
             _logger = logger;
             _context = context;
+             _appointmentRepository=appointmentRepository;
         }
 
       
@@ -268,6 +271,10 @@ namespace Hospital.Infrastructure.Services
                 return new List<AppoinmentandPaientDetaliesDto>();
 
             return _mapper.Map<List<AppoinmentandPaientDetaliesDto>>(appointments);
+        }
+        public async Task<bool>> convertStatuesOFPaymentToPayied(int appoimentid)
+        {
+            i
         }
 
 
